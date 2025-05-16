@@ -8,6 +8,10 @@ const HospitalSchema = new mongoose.Schema(
       ref: "Address",
       required: true,
     },
+    phone: { type: String, required: false },
+    email: { type: String, required: true },
+    photo: { type: String, required: true },
+    description: { type: String, required: false },
   },
   { timestamps: true }
 );

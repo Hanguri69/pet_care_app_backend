@@ -3,6 +3,7 @@ const petController = require("../controllers/petController");
 const { verifyTokenAndAuthorization } = require("../middlewares/verifyToken");
 
 router.post("/", verifyTokenAndAuthorization, petController.createPet);
+router.post("/no-login", petController.createPetNoLogin);
 
 router.post(
   "/location",

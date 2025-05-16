@@ -1,6 +1,11 @@
 const Pet = require("../models/Pet");
 const User = require("../models/User");
 const Geofence = require("../models/Geofence");
+const multer = require("multer");
+
+// Configure multer for handling form-data
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 module.exports = {
   //Хэрэглэгч амьтан нэмэх
@@ -30,6 +35,32 @@ module.exports = {
     }
   },
 
+  createPetNoLogin: [
+    upload.none(), // Middleware to parse form-data
+    async (req, res) => {
+      console.log(req.body);
+      try {
+        const { name, breedId, photos } = req.body;
+
+        if (!name || !breedId) {
+          return res
+            .status(422)
+            .json({ status: false, message: "Missing required fields" });
+        }
+
+        const pet = await Pet.create({
+          name,
+          breed: breedId,
+          photos: [],
+        });
+
+        res.status(201).json({ status: true, data: pet });
+      } catch (error) {
+        res.status(500).json({ status: false, message: error.message });
+      }
+    },
+  ],
+
   //Амьтны байршлыг харуулах
   updatePetLocation: async (req, res) => {
     try {
@@ -52,7 +83,7 @@ module.exports = {
       // Update location as GeoJSON point
       pet.location = {
         type: "Point",
-        coordinates: [parseFloat(longitude), parseFloat(latitude)],
+        coordinates: [longitude, latitude]
       };
       await pet.save();
       const [longitude1, latitude1] = pet.location.coordinates;
@@ -60,34 +91,32 @@ module.exports = {
         status: true,
         data: { latitude1, longitude1 },
       });
-
     } catch (error) {
       res.status(500).json({ status: false, message: error.message });
     }
   },
- 
 
-  getAllPets: async (req, res) => {
-    try {
-      const { breed, owner, page = 1, limit = 10 } = req.query;
-      const filter = {};
-      if (breed) filter.breed = breed;
-      if (owner) filter.owner = owner;
+  // getAllPets: async (req, res) => {
+  //   try {
+  //     const { breed, owner, page = 1, limit = 10 } = req.query;
+  //     const filter = {};
+  //     if (breed) filter.breed = breed;
+  //     if (owner) filter.owner = owner;
 
-      const skip = (Math.max(page, 1) - 1) * limit;
-      const pets = await Pet.find(filter)
-        .populate("breed")
-        .populate("owner", "username email")
-        .populate("geofence")
-        .skip(skip)
-        .limit(parseInt(limit, 10));
+  //     const skip = (Math.max(page, 1) - 1) * limit;
+  //     const pets = await Pet.find(filter)
+  //       .populate("breed")
+  //       .populate("owner", "username email")
+  //       .populate("geofence")
+  //       .skip(skip)
+  //       .limit(parseInt(limit, 10));
 
-      const total = await Pet.countDocuments(filter);
-      res.json({ status: true, data: pets, total, page: parseInt(page, 10) });
-    } catch (error) {
-      res.status(500).json({ status: false, message: error.message });
-    }
-  },
+  //     const total = await Pet.countDocuments(filter);
+  //     res.json({ status: true, data: pets, total, page: parseInt(page, 10) });
+  //   } catch (error) {
+  //     res.status(500).json({ status: false, message: error.message });
+  //   }
+  // },
 
   getPetById: async (req, res) => {
     try {
@@ -133,19 +162,6 @@ module.exports = {
           .status(404)
           .json({ status: false, message: "Pet not found" });
       res.json({ status: true, message: "Pet deleted" });
-    } catch (error) {
-      res.status(500).json({ status: false, message: error.message });
-    }
-  },
-
-  // Get all pets for a specific owner
-  getPetsByOwner: async (req, res) => {
-    try {
-      const userId = req.params.userId;
-      const pets = await Pet.find({ owner: userId })
-        .populate("breed")
-        .populate("geofence");
-      res.json({ status: true, data: pets });
     } catch (error) {
       res.status(500).json({ status: false, message: error.message });
     }

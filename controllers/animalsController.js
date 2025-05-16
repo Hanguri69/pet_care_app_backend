@@ -12,6 +12,19 @@ module.exports = {
       res.status(500).json({ status: false, message: error.message });
     }
   },
+  getAllAnimals: async (req, res) => {
+    console.log("data fetched");
+    try {
+      const filter = {};
+      if (req.query.animalId) {
+        filter.animalId = req.query.animalId;
+      }
+      const animals = await Animal.find(filter).select("-__v");
+      res.status(200).json({ status: true, data: animals });
+    } catch (error) {
+      res.status(500).json({ status: false, message: error.message });
+    }
+  },
   deleteAnimal: async (req, res) => {
     try {
       // Attempt to delete and get back the deleted document

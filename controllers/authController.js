@@ -168,6 +168,8 @@ module.exports = {
   loginDoctor: async (req, res) => {
     try {
       const { email, password } = req.body;
+      console.log("hasfb");
+
       if (!email || !password) {
         return res
           .status(422)
