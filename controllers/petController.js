@@ -214,23 +214,7 @@ module.exports = {
   },
 
   // Upload photos for a pet (assumes middleware like multer populates req.files)
-  uploadPetPhotos: async (req, res) => {
-    try {
-      const pet = await Pet.findById(req.params.id);
-      if (!pet)
-        return res
-          .status(404)
-          .json({ status: false, message: "Pet not found" });
-
-      // Example: req.files = [{ path: 'url1' }, { path: 'url2' }]
-      const photoUrls = req.files.map((file) => file.path);
-      pet.photos.push(...photoUrls);
-      await pet.save();
-      res.json({ status: true, data: pet });
-    } catch (error) {
-      res.status(500).json({ status: false, message: error.message });
-    }
-  },
+  
 
   // Delete a specific photo from a pet
   deletePetPhoto: async (req, res) => {
