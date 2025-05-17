@@ -6,7 +6,7 @@ const multer = require("multer");
 // Configure multer for handling form-data
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
-
+//asdf
 module.exports = {
   //Хэрэглэгч амьтан нэмэх
   createPet: async (req, res) => {
@@ -214,7 +214,6 @@ module.exports = {
   },
 
   // Upload photos for a pet (assumes middleware like multer populates req.files)
-  
 
   // Delete a specific photo from a pet
   deletePetPhoto: async (req, res) => {
