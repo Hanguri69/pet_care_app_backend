@@ -11,22 +11,20 @@ module.exports = {
   //Хэрэглэгч амьтан нэмэх
   createPet: async (req, res) => {
     try {
-      const { name, breedId, age, gender, photos } = req.body;
+      const photoUrls = req.files.map((file) => file.path);
+      const { name, breedId, photos } = req.body;
       const ownerId = req.user.id;
 
-      if (!name || !breedId || age == null || !gender) {
+      if (!name || !breedId || !ownerId) {
         return res
           .status(422)
           .json({ status: false, message: "Missing required fields" });
       }
-
       const pet = await Pet.create({
         name,
         owner: ownerId,
         breed: breedId,
-        age,
-        gender,
-        photos: photos || [],
+        photos: photoUrls,
       });
 
       res.status(201).json({ status: true, data: pet });
@@ -34,32 +32,42 @@ module.exports = {
       res.status(500).json({ status: false, message: error.message });
     }
   },
+  getPetByOwner: async (req, res) => {
+    try {
+      const pets = await Pet.find({ owner: req.user.id }).select("name photos"); // Select only name and photos
 
-  createPetNoLogin: [
-    upload.none(), // Middleware to parse form-data
-    async (req, res) => {
-      console.log(req.body);
-      try {
-        const { name, breedId, photos } = req.body;
+      res.json({ status: true, data: pets });
+    } catch (error) {
+      res.status(500).json({ status: false, message: error.message });
+    }
+  },
 
-        if (!name || !breedId) {
-          return res
-            .status(422)
-            .json({ status: false, message: "Missing required fields" });
-        }
+  // createPetNoLogin: [
+  //   async (req, res) => {
+  //     const photoUrls = req.files?.map((file) => file.path);
 
-        const pet = await Pet.create({
-          name,
-          breed: breedId,
-          photos: [],
-        });
+  //     console.log(req.body);
+  //     try {
+  //       const { name, breedId, photos } = req.body;
 
-        res.status(201).json({ status: true, data: pet });
-      } catch (error) {
-        res.status(500).json({ status: false, message: error.message });
-      }
-    },
-  ],
+  //       if (!name || !breedId) {
+  //         return res
+  //           .status(422)
+  //           .json({ status: false, message: "Missing required fields" });
+  //       }
+
+  //       const pet = await Pet.create({
+  //         name,
+  //         breed: breedId,
+  //         photos: photoUrls,
+  //       });
+
+  //       res.status(201).json({ status: true, data: pet });
+  //     } catch (error) {
+  //       res.status(500).json({ status: false, message: error.message });
+  //     }
+  //   },
+  // ],
 
   //Амьтны байршлыг харуулах
   updatePetLocation: async (req, res) => {
@@ -83,7 +91,7 @@ module.exports = {
       // Update location as GeoJSON point
       pet.location = {
         type: "Point",
-        coordinates: [longitude, latitude]
+        coordinates: [longitude, latitude],
       };
       await pet.save();
       const [longitude1, latitude1] = pet.location.coordinates;

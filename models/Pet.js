@@ -11,24 +11,13 @@ const PetSchema = new mongoose.Schema({
   age: { type: Number, required: false },
   gender: { type: String, required: false, enum: ["Male", "Female"] },
   photos: [{ type: String, required: false }],
-  location: {
-    type: {
-      type: String,
-      enum: ["Point"],
-      default: "Point",
-    },
-    coordinates: {
-      type: [Number], // [longitude, latitude]
-      required: false,
-    },
-  },
+  latitude: { type: Number, required: false },
+  longitude: { type: Number, required: false },
   geofenceId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Geofence",
     required: false,
   },
 });
-PetSchema.index({ location: "2dsphere" });
-
 
 module.exports = mongoose.model("Pet", PetSchema);
