@@ -1,14 +1,43 @@
-const mongoose = require("mongoose")
+// models/Record.js
+const mongoose = require("mongoose");
+const { Schema, Types } = mongoose;
 
-const RecordSchema = new mongoose.Schema(
+const RecordSchema = new Schema(
   {
-    userId: { type:mongoose.Mongoose.Types.ObjectId, ref: "User", required: true },
-    petId: { type: mongoose.Mongoose.Types.ObjectId, ref: "Pet", required: true },
-    DoctorId: { type: mongoose.Mongoose.Types.ObjectId, ref: "Doctor", required: false },
-    HospitalId: { type: mongoose.Mongoose.Types.ObjectId, ref: "Hospital", required: false },
-    date: { type: Date, required: true },
-    TreatmentId: { type: mongoose.Mongoose.Types.ObjectId, ref: "Treatment", required: true },
-    isApproved: { type: Boolean, default: false },
+    userId: {
+      type: Schema.Types.ObjectId, // ← энд
+      ref: "User",
+      required: true,
+    },
+    petId: {
+      type: Schema.Types.ObjectId, // ← болон энд
+      ref: "Pet",
+      required: true,
+    },
+    DoctorId: {
+      type: Schema.Types.ObjectId,
+      ref: "Doctor",
+    },
+    HospitalId: {
+      type: Schema.Types.ObjectId,
+      ref: "Hospital",
+    },
+    date: {
+      type: Date,
+      default: Date.now, // default-оор Date.now өгч болно
+      required: true,
+    },
+    TreatmentId: {
+      type: Schema.Types.ObjectId, // ← болон энд
+      ref: "Treatment",
+      required: true,
+    },
+    isApproved: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
+
+module.exports = mongoose.model("Record", RecordSchema);

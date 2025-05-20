@@ -66,10 +66,25 @@ module.exports = {
 
   createDoctor: async (req, res) => {
     try {
-      const { username, email, password, hospitalId, experience, education } =
-        req.body;
+      const {
+        username,
+        email,
+        password,
+        hospitalId,
+        experience,
+        education,
+        imageUrl,
+      } = req.body;
       // 1) Салбар валидаци
-      if (!username || !email || !password || !hospitalId) {
+      if (
+        !username ||
+        !email ||
+        !password ||
+        !hospitalId ||
+        !experience ||
+        !education ||
+        !imageUrl
+      ) {
         return res
           .status(422)
           .json({ status: false, message: "Missing fields" });
@@ -80,23 +95,25 @@ module.exports = {
           .status(409)
           .json({ status: false, message: "Email exists1" });
       }
-      // 3) Парол хэшлэх
-      const hash = await bcrypt.hash(password, 12);
+     
       // 4) User үүсгэх
       const user = await User.create({
         username,
         email,
-        password: hash,
         userType: "Vet",
         verification: true,
+         password: CryptoJS.AES.encrypt(
+          password,
+          process.env.SECRET
+        ).toString(),
       });
       // 5) Doctor профайл үүсгэх
       await Doctor.create({
         userId: user._id,
         hospitalId,
-        AvailableSlots: [],
         doctorExperience: experience,
         doctorEducation: education,
+        imageUrl,
       });
       return res
         .status(201)
@@ -165,44 +182,7 @@ module.exports = {
       res.status(500).json({ status: false, message: error.message });
     }
   },
-  loginDoctor: async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      console.log("hasfb");
-
-      if (!email || !password) {
-        return res
-          .status(422)
-          .json({ status: false, message: "Email and password required" });
-      }
-      const user = await User.findOne({ email });
-      if (!user || user.userType !== "Vet") {
-        return res
-          .status(404)
-          .json({ status: false, message: "Doctor not found" });
-      }
-      // 3) Парол харьцуулах
-      const match = await bcrypt.compare(password, user.password);
-      if (!match) {
-        return res
-          .status(401)
-          .json({ status: false, message: "Wrong password" });
-      }
-      // 4) Токен үүсгэх
-      const token = jwt.sign(
-        { id: user._id, userType: user.userType, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: "7d" }
-      );
-      return res.json({
-        status: true,
-        data: { id: user._id, username: user.username, email: user.email },
-        token,
-      });
-    } catch (err) {
-      return res.status(500).json({ status: false, message: err.message });
-    }
-  },
+  
   // loginDoctor: async (req, res) => {
   //   const { email, password } = req.body;
   //   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;

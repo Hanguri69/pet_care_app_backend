@@ -9,6 +9,11 @@ const PetSchema = new mongoose.Schema({
     ref: "Breed",
     required: true,
   },
+  animalId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Animal",
+    required: true,
+  },
   age: { type: Number, required: false },
   gender: { type: String, required: false, enum: ["Male", "Female"] },
   photos: [{ type: String, required: false }],

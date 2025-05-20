@@ -5,6 +5,5 @@ router.post("/register", authController.createUser);
 router.post("/admin/doctor/register", authController.createDoctor);
 
 router.post("/login", authController.loginUser);
-router.post("/doctor/login", authController.loginDoctor);
 
 module.exports = router;

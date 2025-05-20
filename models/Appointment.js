@@ -5,7 +5,7 @@ const AppointmentSchema = new mongoose.Schema(
     petId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Pet",
-      required: true,
+      required: false,
       index: true,
     },
     doctorId: {
@@ -14,16 +14,11 @@ const AppointmentSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    hospitalId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Hospital",
-      required: true,
-      index: true,
-    },
+    
     ownerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false,
       index: true,
     },
     
@@ -41,20 +36,13 @@ const AppointmentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Pending", "Confirmed", "Cancelled", "Completed"],
-      default: "Pending",
+      enum: [ "Booked", "Completed", "New"],
+      default: "New",
     },
-    isPaid: {
-      type: Boolean,
-      default: false,
-    },
-    paymentRef: {
-      type: String,
-    },
+    
+    
   },
-  {
-    timestamps: true,
-  }
+  
 );
 
 

@@ -29,6 +29,17 @@ router.post(
 //   petController.createPetNoLogin
 // );
 router.get("/", verifyTokenAndAuthorization, petController.getPetByOwner);
-router.post("/location", petController.updatePetLocation);
+router.post(
+  "/location",
+  
+  petController.updatePetLocation
+);
+router.get(
+  "/locations",
+  verifyTokenAndAuthorization,
+  petController.getPetLocations
+);
+router.get("/:petId", petController.getPetById);
+
 
 module.exports = router;
