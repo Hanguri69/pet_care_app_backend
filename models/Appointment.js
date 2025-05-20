@@ -39,6 +39,11 @@ const AppointmentSchema = new mongoose.Schema(
       enum: [ "Booked", "Completed", "New"],
       default: "New",
     },
+    PaymentAddress: {
+      type: String,
+      default: "Pending",
+      enum: [ "Pending", "Paid", "Cancelled"],
+    },
     
     
   },

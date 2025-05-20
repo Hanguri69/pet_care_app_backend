@@ -101,7 +101,7 @@ module.exports = {
 
       appointment.petId = petId;
       appointment.userId = userId;
-      appointment.reason = reason;
+      appointment.reason = reason || "";
       await appointment.save();
       return res.status(200).json({ status: true, data: appointment });
     } catch (err) {
