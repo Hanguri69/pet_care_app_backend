@@ -27,6 +27,11 @@ const RecordSchema = new Schema(
       default: Date.now, // default-оор Date.now өгч болно
       required: true,
     },
+    endDate: {
+      type: Date,
+      default: Date.now, // default-оор Date.now өгч болно
+      required: true,
+    },
     TreatmentId: {
       type: Schema.Types.ObjectId, // ← болон энд
       ref: "Treatment",

@@ -7,9 +7,9 @@ const Pet = require("../models/Pet");
 module.exports = {
   createRecord: async (req, res) => {
     try {
-      console.log("📥 createRecord body:", req.body);
+      console.log(" createRecord body:", req.body);
 
-      const userId = req.user.id; 
+      const userId = req.user.id;
       const { petId, treatmentName } = req.body;
       const date = Date.now();
 
@@ -38,15 +38,17 @@ module.exports = {
         petId,
         date,
         TreatmentId: treatment._id,
+        endDate: date + treatment.expiryDate * 24 * 60 * 60 * 1000,
+        isApproved: false,
       });
 
       return res.status(201).json({ status: true, data: record });
     } catch (error) {
-      console.error("🔥 createRecord error:", error);
+      console.error("createRecord error:", error);
       return res.status(500).json({ status: false, message: error.message });
     }
   },
-  
+
   countRecordByPetId: async (req, res) => {
     try {
       const petId = req.params.petId;
@@ -56,14 +58,13 @@ module.exports = {
       return res.status(500).json({ status: false, message: error.message });
     }
   },
-    getRecordsByPetId: async (req, res) => {
-        try {
-        const petId = req.params.petId;
-        const records = await Record.find({ petId });
-        return res.json({ status: true, data: records });
-        } catch (error) {
-        return res.status(500).json({ status: false, message: error.message });
-        }
-    },
-
+  getRecordsByPetId: async (req, res) => {
+    try {
+      const petId = req.params.petId;
+      const records = await Record.find({ petId });
+      return res.json({ status: true, data: records });
+    } catch (error) {
+      return res.status(500).json({ status: false, message: error.message });
+    }
+  },
 };

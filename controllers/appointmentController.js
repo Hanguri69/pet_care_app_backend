@@ -48,7 +48,7 @@ module.exports = {
         status: "New",
         timeStart: { $gte: new Date() },
       });
-      
+
       return res
         .status(200)
         .json({ status: true, data: availableAppointments });
@@ -88,7 +88,7 @@ module.exports = {
           .json({ status: false, message: "Appointment not found" });
       }
       const userId = req.user.id;
-      
+
       const petId = req.body.petId;
       const reason = req.body.reason;
       if (appointment.status === "Booked") {
@@ -100,7 +100,7 @@ module.exports = {
       appointment.status = "Booked";
 
       appointment.petId = petId;
-      appointment.userId = userId;
+      appointment.ownerId = userId;
       appointment.reason = reason || "";
       await appointment.save();
       return res.status(200).json({ status: true, data: appointment });

@@ -27,7 +27,7 @@ module.exports = {
     }
   },
   getAllHospitals: async (req, res) => {
-    try {
+    try { 
       const hospitals = await Hospital.find();
       return res.status(200).json({ status: true, data: hospitals });
     } catch (err) {
