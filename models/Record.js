@@ -5,12 +5,12 @@ const { Schema, Types } = mongoose;
 const RecordSchema = new Schema(
   {
     userId: {
-      type: Schema.Types.ObjectId, // ← энд
+      type: Schema.Types.ObjectId, 
       ref: "User",
       required: true,
     },
     petId: {
-      type: Schema.Types.ObjectId, // ← болон энд
+      type: Schema.Types.ObjectId, 
       ref: "Pet",
       required: true,
     },
@@ -24,18 +24,22 @@ const RecordSchema = new Schema(
     },
     date: {
       type: Date,
-      default: Date.now, // default-оор Date.now өгч болно
+      default: Date.now, 
       required: true,
     },
     endDate: {
       type: Date,
-      default: Date.now, // default-оор Date.now өгч болно
+      default: Date.now, 
       required: true,
     },
     TreatmentId: {
-      type: Schema.Types.ObjectId, // ← болон энд
+      type: Schema.Types.ObjectId, 
       ref: "Treatment",
       required: true,
+    },
+    isValid: {
+      type: Boolean,
+      default: true,
     },
     isApproved: {
       type: Boolean,

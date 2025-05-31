@@ -7,7 +7,7 @@ const Pet = require("../models/Pet");
 module.exports = {
   createRecord: async (req, res) => {
     try {
-      console.log(" createRecord body:", req.body);
+      console.log("createRecord body:", req.body);
 
       const userId = req.user.id;
       const { petId, treatmentName } = req.body;
@@ -31,6 +31,20 @@ module.exports = {
         return res
           .status(404)
           .json({ status: false, message: "Treatment not found" });
+      }
+
+      const existingRecord = await Record.findOne({
+        userId,
+        petId,
+        TreatmentId: treatment._id,
+        endDate: { $gt: Date.now() },
+      });
+
+      if (existingRecord) {
+        return res.status(400).json({
+          status: false,
+          message: "Энэ эмчилгээний бүртгэл аль хэдийнэ идэвхтэй байна.",
+        });
       }
 
       const record = await Record.create({
@@ -61,8 +75,31 @@ module.exports = {
   getRecordsByPetId: async (req, res) => {
     try {
       const petId = req.params.petId;
-      const records = await Record.find({ petId });
-      return res.json({ status: true, data: records });
+
+      // 1) Record.find() → TreatmentId-ээр populate хийж Treatment.name-ийг авна
+      const records = await Record.find({ petId }).populate({
+        path: "TreatmentId", // Record схем доторх ref-тэй талбар
+        model: "Treatment", // Treatment модель
+        select: "name", // Зөвхөн name талбарыг авна
+      });
+
+      const now = new Date();
+
+      // 2) isValid-ийг шинэчлэх болон treatment нэрээ тусад нь нэмэх
+      const updatedRecords = records.map((record) => {
+        // record.TreatmentId нь одоо объект (эсвэл null) байгаа
+        const treatmentName = record.TreatmentId
+          ? record.TreatmentId.name
+          : "Unknown";
+
+        return {
+          ...record.toObject(),
+          treatmentName, // treatment-н нэр
+          isValid: new Date(record.endDate) > now, // хугацаа дуусааг шалгах
+        };
+      });
+
+      return res.json({ status: true, data: updatedRecords });
     } catch (error) {
       return res.status(500).json({ status: false, message: error.message });
     }
