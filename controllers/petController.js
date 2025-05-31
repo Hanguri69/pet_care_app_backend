@@ -104,7 +104,7 @@ module.exports = {
     try {
       const { latitude, longitude, id } = req.body;
       console.log(req.body);
-      const pet = await Pet.findOne({ deviceId: id});
+      const pet = await Pet.findOne({ deviceId: id });
       if (!pet) {
         return res
           .status(404)
@@ -112,7 +112,7 @@ module.exports = {
       }
 
       const data = await Pet.updateOne(
-        { deviceId: id,  },
+        { deviceId: id },
         { $set: { latitude, longitude } }
       );
       if (!data) {
@@ -132,7 +132,7 @@ module.exports = {
     try {
       const ownerId = req.user.id;
       const pets = await Pet.find({ owner: ownerId }).select(
-        "deviceId latitude longitude photos "
+        "deviceId latitude longitude photos name "
       );
       if (!pets) {
         return res
@@ -167,7 +167,6 @@ module.exports = {
   //   }
   // },
 };
-
 
 // #include <TinyGPS++.h>
 // #include <WiFiManager.h>
@@ -204,7 +203,6 @@ module.exports = {
 //   while (gpsSerial.available() > 0) {
 //     gps.encode(gpsSerial.read());
 //   }
-  
 
 //   // 10 секунд тутамд GPS илгээх
 //   if (millis() - lastSendTime >= 10000) {
@@ -221,7 +219,7 @@ module.exports = {
 //       Serial.print("Satellites: "); Serial.println(gps.satellites.value());
 
 //       sendGPSData(lat, lng, spd, alt);
-      
+
 //       lastSendTime = millis(); // Сүүлд илгээсэн хугацааг шинэчлэх
 //     }
 //   }

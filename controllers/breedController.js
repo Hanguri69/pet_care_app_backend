@@ -12,6 +12,14 @@ module.exports = {
       res.status(500).json({ status: false, message: error.message });
     }
   },
+  getBreedById: async (req, res) => {
+    try {
+      const breed = await Breed.findById(req.params.breedId);
+      res.status(200).json({ status: true, data: breed });
+    } catch (error) {
+      res.status(500).json({ status: false, message: error.message });
+    }
+  }, 
 
   getAllBreeds: async (req, res) => {
     try {

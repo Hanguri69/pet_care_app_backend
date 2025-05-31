@@ -95,17 +95,14 @@ module.exports = {
           .status(409)
           .json({ status: false, message: "Email exists1" });
       }
-     
+
       // 4) User үүсгэх
       const user = await User.create({
         username,
         email,
         userType: "Vet",
         verification: true,
-         password: CryptoJS.AES.encrypt(
-          password,
-          process.env.SECRET
-        ).toString(),
+        password: CryptoJS.AES.encrypt(password, process.env.SECRET).toString(),
       });
       // 5) Doctor профайл үүсгэх
       await Doctor.create({
@@ -125,6 +122,7 @@ module.exports = {
 
   loginUser: async (req, res) => {
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    console.log("Login request received:", req.body);
 
     if (!emailRegex.test(req.body.email)) {
       return res
@@ -182,7 +180,7 @@ module.exports = {
       res.status(500).json({ status: false, message: error.message });
     }
   },
-  
+
   // loginDoctor: async (req, res) => {
   //   const { email, password } = req.body;
   //   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
